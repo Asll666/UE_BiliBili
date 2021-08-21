@@ -4,6 +4,7 @@
 #include "MyUserWidget.h"
 
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UMyUserWidget::Init(FString TypeStr,UObject** ValueObject,FString PropertyName)
@@ -22,6 +23,7 @@ void UMyUserWidget::Init(FString TypeStr,UObject** ValueObject,FString PropertyN
 	TypeStr.RemoveAt(0);
 	
 	UObject* Object = FindObject<UObject>(ANY_PACKAGE,*TypeStr);
+	ValueClass = FindObject<UClass>(ANY_PACKAGE,*TypeStr);
 
 	Value = ValueObject;
 
@@ -38,13 +40,34 @@ void UMyUserWidget::Init(FString TypeStr,UObject** ValueObject,FString PropertyN
 			ObjectSelectName.Add(ObjectAsset.GetAsset()->GetName());
 		}
 	}
+	if(Type == EType::Actor)
+	{
+		TArray<AActor*> OutActors;
+		UGameplayStatics::GetAllActorsOfClass(this,ValueClass,OutActors);
+
+		int32 INT32 = OutActors.Num();
+
+		for (int i = 0; i < OutActors.Num(); ++i)
+		{
+			ObjectSelectHelpers.Add(OutActors[i]);
+			ObjectSelectName.Add(OutActors[i]->GetName());
+		}
+	}
 
 	InitSelectObject_UI(ObjectSelectName,PropertyName);
 }
 
 void UMyUserWidget::SetValue(FString Name)
 {
-	UObject* Object = FindObject<UObject>(ANY_PACKAGE,*Name);
+	if(Type == EType::Obejct)
+	{
+		UObject* Object = FindObject<UObject>(ANY_PACKAGE,*Name);
 
-	*Value = Object;
+		*Value = Object;
+	}
+	else if(Type == EType::Actor)
+	{
+		int32 Index = ObjectSelectName.Find(Name);
+		*Value = ObjectSelectHelpers[Index];
+	}
 }

@@ -34,6 +34,8 @@ public:
 	void SetValue(FString Name);
 
 	UObject** Value;
+
+	UClass* ValueClass;
 private:
 	TArray<FAssetData> CanSelectObject;
 	TArray<UObject*> ObjectSelectHelpers;

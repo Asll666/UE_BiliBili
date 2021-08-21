@@ -90,12 +90,15 @@ TArray<UUserWidget*> ABILICharacter::GetProperty(TSubclassOf<UMyUserWidget> Obje
 		{
 			FString Name = It->GetCPPType();
 			
-			UMyUserWidget* ObjectWidget =
+			if(Name[0] == 'U' || Name[0] == 'A')
+			{
+				UMyUserWidget* ObjectWidget =
 				Cast<UMyUserWidget>(UWidgetBlueprintLibrary::Create(this,ObjectWidgetClass,UGameplayStatics::GetPlayerController(this,0)));
 
-			ObjectWidget->Init(Name,It->ContainerPtrToValuePtr<UObject*>(this),It->GetNameCPP());
+				ObjectWidget->Init(Name,It->ContainerPtrToValuePtr<UObject*>(this),It->GetNameCPP());
 			
-			toR.Add(ObjectWidget);
+				toR.Add(ObjectWidget);			
+			}
 		}
 	}
 
