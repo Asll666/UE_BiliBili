@@ -36,6 +36,12 @@ public:
 	UPROPERTY(BlueprintReadWrite,SaveGame,EditAnywhere)
 		UStaticMesh* StaticMesh;
 
+	UFUNCTION(BlueprintCallable,Exec)
+		void SaveMap();
+	
+	UFUNCTION(BlueprintCallable,Exec)
+		void M_LoadMap();
+
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -76,4 +82,3 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
-

@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "JsonUtilities/Public/JsonObjectConverter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Trace/Detail/Field.h"
 
@@ -103,6 +104,53 @@ TArray<UUserWidget*> ABILICharacter::GetProperty(TSubclassOf<UMyUserWidget> Obje
 	}
 
 	return toR;
+}
+
+void ABILICharacter::SaveMap()
+{
+	FString SaveJsonStr;
+	
+	TSharedRef<TJsonWriter<TCHAR,TPrettyJsonPrintPolicy<TCHAR>>> JsonWrite = TJsonWriterFactory<TCHAR, TPrettyJsonPrintPolicy<TCHAR>>::Create(&SaveJsonStr);
+	JsonWrite->WriteObjectStart();
+
+	JsonWrite->WriteArrayStart("Items");
+	
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(this,ACharacter::StaticClass(),Actors);
+
+	for (int i = 0; i < Actors.Num(); ++i)
+	{
+		AActor* OnFor = Actors[i];
+		
+		TSharedPtr<FJsonObject> toSave = MakeShareable(new FJsonObject);
+		FJsonObjectConverter::UStructToJsonObject(OnFor->GetClass(),OnFor,toSave.ToSharedRef(),CPF_SaveGame,0);
+		FJsonSerializer::Serialize(toSave.ToSharedRef(), JsonWrite, false);
+	}
+
+	JsonWrite->WriteArrayEnd();
+	JsonWrite->WriteObjectEnd();
+	JsonWrite->Close();
+
+	FFileHelper::SaveStringToFile(SaveJsonStr,*(FPaths::ProjectContentDir() + "Maps/MyMap.json"));
+}
+
+void ABILICharacter::M_LoadMap()
+{
+	FString LoadJsonStr;
+	FFileHelper::LoadFileToString(LoadJsonStr, *(FPaths::ProjectContentDir() + "Maps/MyMap.json"));
+
+	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(LoadJsonStr);
+	TSharedPtr<FJsonObject> JsonObject;
+	FJsonSerializer::Deserialize(JsonReader, JsonObject);
+	
+	TArray<TSharedPtr<FJsonValue>> OutArray = JsonObject->GetArrayField("Items");
+
+	for (int i = 0; i < OutArray.Num(); ++i)
+	{
+		TSharedPtr<FJsonObject> Item = OutArray[i]->AsObject();
+
+		FJsonObjectConverter::JsonObjectToUStruct(Item.ToSharedRef(), this->GetClass(), this);
+	}
 }
 
 void ABILICharacter::OnResetVR()

@@ -1,0 +1,12 @@
+{
+	"Items": [
+		{
+			"material": "Material'/Engine/EngineSky/VolumetricClouds/m_SimpleVolumetricCloud.m_SimpleVolumetricCloud'",
+			"newStaticMesh": "StaticMesh'/Engine/EditorMeshes/Camera/SM_CraneRig_Body.SM_CraneRig_Body'",
+			"iUIN": "StaticMesh'/Engine/EditorMeshes/Camera/SM_CraneRig_Arm.SM_CraneRig_Arm'",
+			"myActor": "StaticMeshActor'/Game/ThirdPersonCPP/Maps/UEDPIE_0_ThirdPersonExampleMap.ThirdPersonExampleMap:PersistentLevel.Floor'",
+			"staticMesh": "None",
+			"bCanBeDamaged": true
+		}
+	]
+}
