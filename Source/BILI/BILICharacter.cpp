@@ -98,7 +98,7 @@ TArray<UUserWidget*> ABILICharacter::GetProperty(TSubclassOf<UMyUserWidget> Obje
 
 				ObjectWidget->Init(Name,It->ContainerPtrToValuePtr<UObject*>(this),It->GetNameCPP());
 			
-				toR.Add(ObjectWidget);			
+				toR.Add(ObjectWidget);
 			}
 		}
 	}
@@ -151,6 +151,35 @@ void ABILICharacter::M_LoadMap()
 
 		FJsonObjectConverter::JsonObjectToUStruct(Item.ToSharedRef(), this->GetClass(), this);
 	}
+}
+
+void ABILICharacter::CallMyFun()
+{
+	void* Malloc = FMemory::Malloc(sizeof(float) * 3 + sizeof(FVector));
+
+	float x = 10;
+	float y = 20;
+	float z = 30;
+
+	FMemory::Memcpy(Malloc,&x,sizeof(float));
+	FMemory::Memcpy((char*)Malloc + sizeof(float),&y,sizeof(float));
+	FMemory::Memcpy((char*)Malloc + sizeof(float) * 2,&z,sizeof(float));
+
+	UFunction* MakeVectorFun = FindFunction("MakeVector");
+	
+
+	ProcessEvent(MakeVectorFun,Malloc);
+
+	FVector* Vector = (FVector*)((char*)Malloc + (sizeof(float) * 3));
+	if(Vector)
+	{
+		UE_LOG(LogTemp,Log,TEXT("%s"),*Vector->ToString())
+	}
+}
+
+FVector ABILICharacter::MakeVector(float x, float y, float z)
+{
+	return FVector(x,y,z);
 }
 
 void ABILICharacter::OnResetVR()

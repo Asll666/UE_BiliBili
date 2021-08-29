@@ -41,6 +41,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable,Exec)
 		void M_LoadMap();
+		
+	UFUNCTION(Exec)
+		void CallMyFun();
+	
+	UFUNCTION(Exec)
+		FVector MakeVector(float x,float y,float z);
 
 protected:
 
